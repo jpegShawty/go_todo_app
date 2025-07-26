@@ -4,9 +4,12 @@ import (
 	"github.com/jmoiron/sqlx"
 	todo "github.com/jpegShawty/go_todo_app/pkg"
 )
+// Для чего интерфейс? Чтобы можно было создать NewAuthMongo итд.
+// То есть поменять реализацию, вот и все
 
 type Authorization interface {
 	CreateUser(user todo.User) (int, error)
+	GetUser(username, password string) (todo.User, error)
 }
 
 type TodoList interface {

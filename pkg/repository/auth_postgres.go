@@ -15,6 +15,7 @@ func NewAuthPostgres(db *sqlx.DB) *AuthPostgres{
 	return &AuthPostgres{db: db}
 }
 
+// NewAuthPostgres.CreateUser()  - интерфейс Authorization структуры Repository
 func (r *AuthPostgres) CreateUser(user todo.User) (int, error){
 	var id int
 	query := fmt.Sprintf("INSERT INTO %s (name, username, password_hash) values ($1, $2, $3) RETURNING id", usersTable)
@@ -23,4 +24,13 @@ func (r *AuthPostgres) CreateUser(user todo.User) (int, error){
 		return 0, err
 	}
 	return id, nil
+}
+
+func (r *AuthPostgres) GetUser(username, password string) (todo.User, error){
+	var user todo.User
+	query := fmt.Sprintf("SELECT id FROM %s WHERE username=$1 AND password_hash=$2", usersTable)
+	// записываем в структуру user результат выборки
+	err := r.db.Get(&user, query, username, password)
+
+	return user, err
 }
