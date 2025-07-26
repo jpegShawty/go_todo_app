@@ -26,6 +26,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	}
 
 	// Работа со списками и их задачами
+	// Создаю группу маршрутов /api
+	// Каждый путь, начинающийся с /api, будет сначала проходить через middleware h.userIdentity
+	//
 	api := router.Group("/api", h.userIdentity)
 	{
 		lists := api.Group("/lists")
