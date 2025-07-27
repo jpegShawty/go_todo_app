@@ -14,6 +14,8 @@ import (
 	"github.com/jpegShawty/go_todo_app/pkg/repository"
 	"github.com/jpegShawty/go_todo_app/pkg/service"
 	"github.com/spf13/viper"
+
+	_ "github.com/jpegShawty/go_todo_app/docs"
 )
 
 // @title Todo App API

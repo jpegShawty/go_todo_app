@@ -6,7 +6,7 @@ import (
 	"github.com/jpegShawty/go_todo_app/pkg/service"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	_ "girhub.com/"
+	_ "github.com/jpegShawty/go_todo_app/docs"
 )
 
 type Handler struct {
