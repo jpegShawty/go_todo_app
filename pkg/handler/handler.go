@@ -1,8 +1,12 @@
 package handler
 
 import (
+	"github.com/swaggo/files"
 	"github.com/gin-gonic/gin"
 	"github.com/jpegShawty/go_todo_app/pkg/service"
+	ginSwagger "github.com/swaggo/gin-swagger"
+
+	_ "girhub.com/"
 )
 
 type Handler struct {
@@ -17,6 +21,8 @@ func NewHandler(services *service.Service) *Handler{
 func (h *Handler) InitRoutes() *gin.Engine {
 	// Инициализируем роутер
 	router := gin.New()
+
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	// Группируем эндпоинты
 	auth := router.Group("/auth")
@@ -44,12 +50,18 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			{
 				items.POST("/", h.createItem)
 				items.GET("/", h.getAllItems)
-				items.GET("/:item.id", h.getItemById)
-				items.PUT("/:item.id", h.updateItem)
-				items.DELETE("/:item.id", h.deleteItem)
 			}
 		}
+
+		items := api.Group("/items")
+		{
+			items.GET("/:id", h.getItemById)
+			items.PUT("/:id", h.updateItem)
+			items.DELETE("/:id", h.deleteItem)
+		}
 	}
+
+	
 	
 	return router
 }

@@ -1,6 +1,11 @@
 package main
 
 import (
+	"context"
+	"os"
+	"os/signal"
+	"syscall"
+
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 
@@ -10,6 +15,17 @@ import (
 	"github.com/jpegShawty/go_todo_app/pkg/service"
 	"github.com/spf13/viper"
 )
+
+// @title Todo App API
+// @version 1.0
+// @description API Server for TodoList Application
+
+// @host localhost:8080
+// @BasePath /
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
 
 func main(){
 	logrus.SetFormatter(new(logrus.JSONFormatter))
@@ -34,11 +50,28 @@ func main(){
 	handler := handler.NewHandler(service)
 
 	srv := new(todo.Server) // Инициализируем экземпляр сервера
-	if err := srv.Run(viper.GetString("port"), handler.InitRoutes()); err != nil{
-		logrus.Fatalf("error while running http server: %s", err.Error())
 
+	go func(){
+		if err := srv.Run(viper.GetString("port"), handler.InitRoutes()); err != nil{
+			logrus.Fatalf("error while running http server: %s", err.Error())
+
+		}
+	}()
+
+	logrus.Print("Todoapp started")
+
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
+	<-quit
+
+	logrus.Print("Todoapp shutting down")
+
+	if err := srv.Shutdown(context.Background()); err != nil{
+		logrus.Errorf("error occured on server while shutting down: %s", err.Error())
 	}
-
+	if err := db.Close(); err != nil{
+		logrus.Errorf("error occured on db connection close: %s", err.Error())
+	}
 }
 
 // Инициализация конф. файлов
